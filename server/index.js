@@ -81,29 +81,30 @@ app.put("/api/edit/:id", (req, res) => {
   res.status(200).send(users); 
 });
 
+
 let id = 0
-// app.post("/api/goals", (req, res) => {
-//   let newGoal = {...req.body, id}
-//   newGoal.id = globalID; 
-//   goals.push(newGoal); 
-//   res.status(200).send(goals);
-//   globalID++;  
-// })
+app.post("/api/goals", (req, res) => {
+  let newGoal = {...req.body, id}
+  newGoal.id = globalID; 
+  goals.push(newGoal); 
+  res.status(200).send(goals);
+  globalID++;  
+})
 
-// app.delete("/api/goals/:id", (req, res) => {
-//   let index = goals.findIndex(goal => goal.id === +req.params.id); 
-//   goals.splice(index, 1); 
-//   res.status(200).send(goals); 
-// });
+app.delete("/api/goals/:id", (req, res) => {
+  let index = goals.findIndex(goal => goal.id === +req.params.id); 
+  goals.splice(index, 1); 
+  res.status(200).send(goals); 
+});
 
-// app.put("/api/goals/:id", (req, res) => {
-//   let {id} = req.params; 
-//   let body= req.body; 
-//   let index = goals.findIndex(goal => +goal.id === +id); 
-// console.log(id,body,index)
-//   goals[index].goalDescription = body.goalDescription;
-//   goals[index].goals = body.goal;
-//   res.status(200).send(goals);
-// })
+app.put("/api/goals/:id", (req, res) => {
+  let {id} = req.params; 
+  let body= req.body; 
+  let index = goals.findIndex(goal => +goal.id === +id); 
+console.log(id,body,index)
+  goals[index].goalDescription = body.goalDescription;
+  goals[index].goals = body.goal;
+  res.status(200).send(goals);
+})
 
 app.listen(4000, () => console.log("Server running on 4000"));

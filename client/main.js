@@ -99,82 +99,75 @@ nameBtn.addEventListener("click", createName);
 indexBtn.addEventListener("click", deleteName); 
 form.addEventListener("submit", editName); 
 
+const removeAllChildNodes = (parent) => {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
 
+const editGoal = (id,goalDesc,goalText) => {
+const goalDescription = document.getElementById("goalDescription")
+const goal = document.getElementById("goal");
+goalDescription.value = goalDesc;
+goal.value = goalText;
 
+axios.put(`http://localhost:4000/api/goals/${id}`, {goalDescription:goalDescription.value,goal:goal.value}).then((res) => {
+    populateGoals(res.data)
+    console.log(res)
+}).catch(err => {
+    console.error({err})
+})
 
+}
+const populateGoals = (goals) => {
+    const goalsContainer = document.getElementById("goals");
+    if(goals.length === 0) {removeAllChildNodes(goalsContainer); return;};
 
+    goals.forEach((goal,i) => {
+    const goalContainer = document.createElement("div");
+    const goalDesc = document.createElement("p");
+    const goalText = document.createElement("p");
+    const deleteButton = document.createElement("button");
+    const editButton = document.createElement("button");
+    goalDesc.innerHTML = `Desc: ${goal.goalDescription}`;
+    goalText.innerHTML = `Goal: ${goal.goal}`;
+    deleteButton.onclick = () => {
+        axios.delete(`http://localhost:4000/api/goals/${i}`).then(res => {
+        console.log(res);
+        populateGoals([])
+        }).catch(err => {
+        console.log({err});
+        }) 
+    }
+    editButton.onclick = (e) => {
+        e.preventDefault();
+        editGoal(i,goalDesc.innerHTML,goalText.innerHTML)};
+    goalContainer.style.cursor = 'pointer'
+    deleteButton.innerText = "Delete";
+    editButton.innerText = "Edit";
+    goalContainer.append(goalDesc,goalText,deleteButton,editButton);
+    goalsContainer.append(goalContainer);
+    });
+}
 
+function getAllGoals() {
+    axios.get("http://localhost:4000/api/goals")
+    .then(function(res) {
+        const data = response.data; 
+        alert(data);  
+})
 
-
-//   const removeAllChildNodes = (parent) => {
-//     while (parent.firstChild) {
-//         parent.removeChild(parent.firstChild);
-//     }
-//   }
-
-// const editGoal = (id,goalDesc,goalText) => {
-//   const goalDescription = document.getElementById("goalDescription")
-//   const goal = document.getElementById("goal");
-//   goalDescription.value = goalDesc;
-//   goal.value = goalText;
-
-//   axios.put(`http://localhost:4000/api/goals/${id}`, {goalDescription:goalDescription.value,goal:goal.value}).then((res) => {
-//     populateGoals(res.data)
-//     console.log(res)
-//   }).catch(err => {
-//     console.error({err})
-//   })
-
-// }
-//   const populateGoals = (goals) => {
-//     const goalsContainer = document.getElementById("goals");
-//     if(goals.length === 0) {removeAllChildNodes(goalsContainer); return;};
-
-//     goals.forEach((goal,i) => {
-//       const goalContainer = document.createElement("div");
-//       const goalDesc = document.createElement("p");
-//       const goalText = document.createElement("p");
-//       const deleteButton = document.createElement("button");
-//       const editButton = document.createElement("button");
-//       goalDesc.innerHTML = `Desc: ${goal.goalDescription}`;
-//       goalText.innerHTML = `Goal: ${goal.goal}`;
-//       deleteButton.onclick = () => {
-//         axios.delete(`http://localhost:4000/api/goals/${i}`).then(res => {
-//           console.log(res);
-//           populateGoals([])
-//         }).catch(err => {
-//           console.log({err});
-//         }) 
-//       }
-//       editButton.onclick = (e) => {
-//         e.preventDefault();
-//         editGoal(i,goalDesc.innerHTML,goalText.innerHTML)};
-//       goalContainer.style.cursor = 'pointer'
-//       deleteButton.innerText = "Delete";
-//       editButton.innerText = "Edit";
-//       goalContainer.append(goalDesc,goalText,deleteButton,editButton);
-//       goalsContainer.append(goalContainer);
-//     });
-//   }
-
-//   function getAllGoals() {
-//     axios.get("http://localhost:4000/api/goals")
-//       .then(function(res) {
-//         const data = response.data; 
-//         alert(data);  
-//       })
-
-//   }
-//   document.getElementById("addGoalButton").onclick = function (e) {
-//     e.preventDefault();
-//     const goalDescription = document.getElementById("goalDescription").value;
-//     const goal = document.getElementById("goal").value; 
-//     const body = { goalDescription, goal };
-//     axios.post("http://localhost:4000/api/goals/", body)
-//         .then((response)  => {
-//           const data = response.data;
-//           populateGoals(data)
-//         }).catch(error => {
-//           console.log({error})
-//         });
-//   };
+}
+document.getElementById("addGoalButton").onclick = function (e) {
+    e.preventDefault();
+    const goalDescription = document.getElementById("goalDescription").value;
+    const goal = document.getElementById("goal").value; 
+    const body = { goalDescription, goal };
+    axios.post("http://localhost:4000/api/goals/", body)
+        .then((response)  => {
+        const data = response.data;
+        populateGoals(data)
+        }).catch(error => {
+        console.log({error})
+        });
+    };
